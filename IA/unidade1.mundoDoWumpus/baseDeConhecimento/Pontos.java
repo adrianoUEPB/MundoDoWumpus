@@ -8,7 +8,7 @@ public class Pontos {
 	public Pontos(int x, int y) {
 		this.x = x;
 		this.y = y;
-		this.visitado = true;
+		this.visitado = false;
 	}
 	
 	public int getX() {

@@ -12,6 +12,12 @@ public class Agente {
 	private Movimentos movimentos;
 	private Pontuacao pontuacao;
 	private BaseConhecimento base;
+	private Pontos ultimoMovimento;
+	
+	/**
+	 * Flags para definir o último movimento feito e para onde poderá se mover
+	 */
+	private boolean direita, esquerda, cima, baixo;
 	
 	public Agente() {
 		this.direcao = new Direcao();
@@ -23,6 +29,7 @@ public class Agente {
 		this.wumpusDead = false;
 		this.subirEscada = false;
 		if(base == null) this.base = new BaseConhecimento();
+		this.direita = this.esquerda = this.cima = this.baixo = false;
 	}
 	
 	public void iniciarIa(){
@@ -43,80 +50,171 @@ public class Agente {
 	
 	public void movimentos(){
 		
+		
+		
 		int x = TelaInicial.x_atual;
 		int y = TelaInicial.y_atual;
 
 		for (Pontos ponto : this.base.getCaminhoOk()) {
-			
-			if(ponto.compareTo(new Pontos(x, y+1))){
-				System.out.println("entrou na direita");
-				if(this.getDirecao().isDireita()){
-					this.movimentos.mover();					
-				}else if(this.getDirecao().isBaixo()){
-					this.movimentos.girar("anti-horario");
-					this.movimentos.mover();
-				}else if(this.getDirecao().isCima()){
-					this.movimentos.girar("horario");
-					this.movimentos.mover();
-				}else if(this.getDirecao().isEsquerda()){
-					this.movimentos.girar("horario");
-					this.movimentos.girar("horario");
-					this.movimentos.mover();
+			if(!ponto.isVisitado()){
+				if(ponto.compareTo(new Pontos(x, y+1))){
+					System.out.println("movimentou pra direita");
+					if(this.getDirecao().isDireita()){
+						this.movimentos.mover();					
+					}else if(this.getDirecao().isBaixo()){
+						this.movimentos.girar("anti-horario");
+						this.movimentos.mover();
+					}else if(this.getDirecao().isCima()){
+						this.movimentos.girar("horario");
+						this.movimentos.mover();
+					}else if(this.getDirecao().isEsquerda()){
+						this.movimentos.girar("horario");
+						this.movimentos.girar("horario");
+						this.movimentos.mover();
+					}
+					this.base.setVisitado(x, y+1);
+					ponto.setVisitado(true);
+					break;
+					
+				}else if(ponto.compareTo(new Pontos(x+1, y))){
+					System.out.println("movimentou pra cima");
+					if(this.getDirecao().isCima()){
+						this.movimentos.mover();				
+					}else if(this.getDirecao().isDireita()){
+						this.movimentos.girar("anti-horario");
+						this.movimentos.mover();
+					}else if(this.getDirecao().isEsquerda()){
+						this.movimentos.girar("horario");
+						this.movimentos.mover();
+					}else if(this.getDirecao().isBaixo()){
+						this.movimentos.girar("horario");
+						this.movimentos.girar("horario");
+						this.movimentos.mover();
+					}
+					this.base.setVisitado(x+1, y);
+					ponto.setVisitado(true);
+					break;
+				}else if(ponto.compareTo(new Pontos(x-1, y))){
+					System.out.println("movimentou pra baixo");
+					if(this.getDirecao().isBaixo()){
+						this.movimentos.mover();					
+					}else if(this.getDirecao().isDireita()){
+						this.movimentos.girar("horario");
+						this.movimentos.mover();
+					}else if(this.getDirecao().isEsquerda()){
+						this.movimentos.girar("anti-horario");
+						this.movimentos.mover();
+					}else if(this.getDirecao().isCima()){
+						this.movimentos.girar("horario");
+						this.movimentos.girar("horario");
+						this.movimentos.mover();
+					}
+					this.base.setVisitado(x-1, y);
+					ponto.setVisitado(true);
+					break;
+				}else if(ponto.compareTo(new Pontos(x, y-1))){
+					System.out.println("movimentou pra esquerda");
+					if(this.getDirecao().isEsquerda()){
+						this.movimentos.mover();					
+					}else if(this.getDirecao().isCima()){
+						this.movimentos.girar("anti-horario");
+						this.movimentos.mover();
+					}else if(this.getDirecao().isBaixo()){
+						this.movimentos.girar("horario");
+						this.movimentos.mover();
+					}else if(this.getDirecao().isDireita()){
+						this.movimentos.girar("horario");
+						this.movimentos.girar("horario");
+						this.movimentos.mover();
+					}
+					this.ultimoMovimento = new Pontos(x, y-1);
+					ponto.setVisitado(true);
+					break;
 				}
 				
-				break;
+				this.base.setVisitado(x, y);
+			}else{
 				
-			}else if(ponto.compareTo(new Pontos(x+1, y))){
-				System.out.println("entrou pra cima");
-				if(this.getDirecao().isCima()){
-					this.movimentos.mover();					
-				}else if(this.getDirecao().isDireita()){
-					this.movimentos.girar("anti-horario");
-					this.movimentos.mover();
-				}else if(this.getDirecao().isEsquerda()){
-					this.movimentos.girar("horario");
-					this.movimentos.mover();
-				}else if(this.getDirecao().isBaixo()){
-					this.movimentos.girar("horario");
-					this.movimentos.girar("horario");
-					this.movimentos.mover();
+				System.out.println("todos os pontos visitados");
+				
+				if(ultimoMovimento.compareTo(new Pontos(x, y+1))){
+					System.out.println("movimentou pra direita");
+					if(this.getDirecao().isDireita()){
+						this.movimentos.mover();					
+					}else if(this.getDirecao().isBaixo()){
+						this.movimentos.girar("anti-horario");
+						this.movimentos.mover();
+					}else if(this.getDirecao().isCima()){
+						this.movimentos.girar("horario");
+						this.movimentos.mover();
+					}else if(this.getDirecao().isEsquerda()){
+						this.movimentos.girar("horario");
+						this.movimentos.girar("horario");
+						this.movimentos.mover();
+					}
+//					this.base.setVisitado(x, y+1);
+//					ponto.setVisitado(true);
+					break;
+					
+				}else if(this.ultimoMovimento.compareTo(new Pontos(x+1, y))){
+					System.out.println("movimentou pra cima");
+					if(this.getDirecao().isCima()){
+						this.movimentos.mover();					
+					}else if(this.getDirecao().isDireita()){
+						this.movimentos.girar("anti-horario");
+						this.movimentos.mover();
+					}else if(this.getDirecao().isEsquerda()){
+						this.movimentos.girar("horario");
+						this.movimentos.mover();
+					}else if(this.getDirecao().isBaixo()){
+						this.movimentos.girar("horario");
+						this.movimentos.girar("horario");
+						this.movimentos.mover();
+					}
+//					this.base.setVisitado(x+1, y);
+//					ponto.setVisitado(true);
+					break;
+				}else if(this.ultimoMovimento.compareTo(new Pontos(x-1, y))){
+					System.out.println("movimentou pra baixo");
+					if(this.getDirecao().isBaixo()){
+						this.movimentos.mover();					
+					}else if(this.getDirecao().isDireita()){
+						this.movimentos.girar("horario");
+						this.movimentos.mover();
+					}else if(this.getDirecao().isEsquerda()){
+						this.movimentos.girar("anti-horario");
+						this.movimentos.mover();
+					}else if(this.getDirecao().isCima()){
+						this.movimentos.girar("horario");
+						this.movimentos.girar("horario");
+						this.movimentos.mover();
+					}
+//					this.base.setVisitado(x-1, y);
+//					ponto.setVisitado(true);
+					break;
+				}else if(this.ultimoMovimento.compareTo(new Pontos(x, y-1))){
+					System.out.println("movimentou pra esquerda");
+					if(this.getDirecao().isEsquerda()){
+						this.movimentos.mover();					
+					}else if(this.getDirecao().isCima()){
+						this.movimentos.girar("anti-horario");
+						this.movimentos.mover();
+					}else if(this.getDirecao().isBaixo()){
+						this.movimentos.girar("horario");
+						this.movimentos.mover();
+					}else if(this.getDirecao().isDireita()){
+						this.movimentos.girar("horario");
+						this.movimentos.girar("horario");
+						this.movimentos.mover();
+					}
+//					this.base.setVisitado(x, y-1);
+//					ponto.setVisitado(true);
+					break;
+				
 				}
-				break;
-			}else if(ponto.compareTo(new Pontos(x-1, y))){
-				System.out.println("entrou pra baixo");
-				if(this.getDirecao().isBaixo()){
-					this.movimentos.mover();					
-				}else if(this.getDirecao().isDireita()){
-					this.movimentos.girar("horario");
-					this.movimentos.mover();
-				}else if(this.getDirecao().isEsquerda()){
-					this.movimentos.girar("anti-horario");
-					this.movimentos.mover();
-				}else if(this.getDirecao().isCima()){
-					this.movimentos.girar("horario");
-					this.movimentos.girar("horario");
-					this.movimentos.mover();
-				}
-				break;
-			}else if(ponto.compareTo(new Pontos(x, y-1))){
-				System.out.println("entrou pra esquerda");
-				if(this.getDirecao().isEsquerda()){
-					this.movimentos.mover();					
-				}else if(this.getDirecao().isCima()){
-					this.movimentos.girar("anti-horario");
-					this.movimentos.mover();
-				}else if(this.getDirecao().isBaixo()){
-					this.movimentos.girar("horario");
-					this.movimentos.mover();
-				}else if(this.getDirecao().isDireita()){
-					this.movimentos.girar("horario");
-					this.movimentos.girar("horario");
-					this.movimentos.mover();
-				}
-				break;
 			}
-			
 		}
+			
 	}
 	
 	public void checarAmbiente(){
@@ -124,23 +222,32 @@ public class Agente {
 		int x = TelaInicial.x_atual;
 		int y = TelaInicial.y_atual;
 		LabelCelula atual = TelaInicial.matriz[x][y];
+		Pontos ponto = null;
 
 		if(!atual.isBrisa() && !atual.isFedor()){
-			this.getBase().setCaminhoOk(x, y);
+			ponto = new Pontos(x, y);
+			this.ultimoMovimento = ponto;
+			ponto.setVisitado(true);
+			this.getBase().setCaminhoOk(ponto);
+			
 			if(!(x+1>3)){
-				this.getBase().setCaminhoOk(x+1, y);
+				ponto = new Pontos(x+1, y);
+				this.getBase().setCaminhoOk(ponto);
 			}
 			
 			if(!(x-1<0)){
-				this.getBase().setCaminhoOk(x-1, y);
+				ponto = new Pontos(x-1, y);
+				this.getBase().setCaminhoOk(ponto);
 			}
 			
 			if(!(y+1>3)){
-				this.getBase().setCaminhoOk(x, y+1);
+				ponto = new Pontos(x, y+1);
+				this.getBase().setCaminhoOk(ponto);
 			}
 			
 			if(!(y-1<0)){
-				this.getBase().setCaminhoOk(x, y-1);
+				ponto = new Pontos(x, y-1);
+				this.getBase().setCaminhoOk(ponto);
 			}
 		} else {
 			
@@ -172,11 +279,11 @@ public class Agente {
 					}
 				}else{
 					//tenho que verificar se tem algo já no poço
-					for (Pontos ponto : this.base.getPoco()) {
-						if(ponto.getY()-1 == y && ponto.getX()==x){
+					for (Pontos poco : this.base.getPoco()) {
+						if(poco.getY()-1 == y && poco.getX()==x){
 							if(!atual.isBrisa()){
-								this.base.removerPoco(ponto);
-								this.base.addCaminho(ponto);
+								this.base.removerPoco(poco);
+								this.base.setCaminhoOk(poco);
 							}
 						}
 					}
@@ -213,26 +320,26 @@ public class Agente {
 							this.getBase().setWumpus(x, y-1);
 					}
 				}else{
-					for (Pontos ponto : this.base.getWumpus()) {
-						if(ponto.getY()-1 == y && ponto.getX()-1 ==x){
+					for (Pontos wumpus : this.base.getWumpus()) {
+						if(wumpus.getY()-1 == y && wumpus.getX()-1 ==x){
 							if(!atual.isWumpus()){
-								this.base.removerWumpus(ponto);
-								this.base.addCaminho(ponto);
+								this.base.removerWumpus(wumpus);
+								this.base.setCaminhoOk(wumpus);
 							}
 						}
 					}
 				}
 				
-				for (Pontos ponto : this.base.getCaminhoOk()) {
-					System.out.println("caminho x " + ponto.getX() + " y " + ponto.getY() );
+				for (Pontos caminho : this.base.getCaminhoOk()) {
+					System.out.println("caminho x " + caminho.getX() + " y " + caminho.getY() );
 				}
 				
-				for (Pontos ponto : this.base.getWumpus()) {
-					System.out.println("wumpus x " + ponto.getX() + " y " + ponto.getY() );
+				for (Pontos wumpus : this.base.getWumpus()) {
+					System.out.println("wumpus x " + wumpus.getX() + " y " + wumpus.getY() );
 				}
 				
-				for (Pontos ponto : this.base.getPoco()) {
-					System.out.println("poço x " + ponto.getX() + " y " + ponto.getY() );
+				for (Pontos poco : this.base.getPoco()) {
+					System.out.println("poço x " + poco.getX() + " y " + poco.getY() );
 				}
 				
 				
