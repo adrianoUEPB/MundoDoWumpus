@@ -5,12 +5,14 @@ import javax.swing.JOptionPane;
 public class Movimentos {
 
 	public void pegarOuro(){
+		JOptionPane.showMessageDialog(null, "Encontrou o ouro!");
 		Agente agente = TelaInicial.matriz[TelaInicial.x_atual][TelaInicial.y_atual].getAgente();
 		if(TelaInicial.matriz[TelaInicial.x_atual][TelaInicial.y_atual].isOuro()){
 			TelaInicial.matriz[TelaInicial.x_atual][TelaInicial.y_atual].setOuro(false);
 			agente.getPontuacao().setPegouOuro();
 			agente.setOuro(true);
 			TelaInicial.matriz[TelaInicial.x_atual][TelaInicial.y_atual].setAgente(agente);
+			JOptionPane.showMessageDialog(null, "O agente pegou o ouro");
 		}
 	}
 	
@@ -70,6 +72,7 @@ public class Movimentos {
 	}
 	
 	public void mover(){
+		JOptionPane.showMessageDialog(null, "");
 		Agente agente = TelaInicial.matriz[TelaInicial.x_atual][TelaInicial.y_atual].getAgente();
 		agente.getPontuacao().setMovimento();
 		if(agente.getDirecao().isDireita()){
@@ -120,6 +123,7 @@ public class Movimentos {
 	}
 	
 	public void girar(String sentido){
+		JOptionPane.showMessageDialog(null, "");
 		Direcao direcao = null;
 		Agente agente = TelaInicial.matriz[TelaInicial.x_atual][TelaInicial.y_atual].getAgente();
 		agente.getPontuacao().setMovimento();
